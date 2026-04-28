@@ -17,7 +17,7 @@ from typing import Union, Optional, Tuple
 from jaxtyping import Array
 
 from jax import lax, jit, vmap
-from jax.tree_util import tree.map
+from jax.tree_util import tree_map
 import jax.numpy as jnp
 from jax.nn import softmax
 from jax.scipy.special import logsumexp
