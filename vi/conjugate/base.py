@@ -152,8 +152,8 @@ class Conjugate(Distribution):
         # TODO needs to be generalised using tree_flatten to pick out fields to expand
         assert shape[-self.batch_dim - self.event_dim :] == self.shape
         shape_diff = shape[: -self.batch_dim - self.event_dim]
-        self.posterior_params = jtu.tree.map(lambda x: jnp.broadcast_to(x, shape_diff + x.shape), self.posterior_params)
-        self.prior_params = jtu.tree.map(lambda x: jnp.broadcast_to(x, shape_diff + x.shape), self.prior_params)
+        self.posterior_params = jtu.tree_map(lambda x: jnp.broadcast_to(x, shape_diff + x.shape), self.posterior_params)
+        self.prior_params = jtu.tree_map(lambda x: jnp.broadcast_to(x, shape_diff + x.shape), self.prior_params)
         self.batch_shape = shape_diff + self.batch_shape
         self.batch_dim = len(self.batch_shape)
 
@@ -263,7 +263,7 @@ class Conjugate(Distribution):
             KL(q(θ|η, v), p(θ|η₀, ν₀))
         """
 
-        log_qp = jtu.tree.map(lambda x, y: x - y, self.posterior_params, self.prior_params)
+        log_qp = jtu.tree_map(lambda x, y: x - y, self.posterior_params, self.prior_params)
         expected_log_qp = utils.map_and_multiply(self.expected_posterior_statistics(), log_qp, self.default_event_dim)
 
         kl_div = self.log_prior_partition() - self.log_posterior_partition() + expected_log_qp
@@ -352,9 +352,9 @@ class Conjugate(Distribution):
         # Need tree version of assert statement of the form:
         #   assert(summed_stats[key].shape == self.posterior_params[key].shape for key in summed_stats.keys()
         # or something like that unless that is unncecessary because apply_add takes care of it...
-        scaled_updates = jtu.tree.map(lambda x: lr * x, summed_stats)
-        scaled_prior = jtu.tree.map(lambda x: lr * (1.0 - beta) * x, self.prior_params)
-        posterior_past = jtu.tree.map(lambda x: (1.0 - lr * (1.0 - beta)) * x, self.posterior_params)
+        scaled_updates = jtu.tree_map(lambda x: lr * x, summed_stats)
+        scaled_prior = jtu.tree_map(lambda x: lr * (1.0 - beta) * x, self.prior_params)
+        posterior_past = jtu.tree_map(lambda x: (1.0 - lr * (1.0 - beta)) * x, self.posterior_params)
         updated_posterior_params = utils.apply_add(posterior_past, utils.apply_add(scaled_prior, scaled_updates))
 
         self.posterior_params = updated_posterior_params
@@ -403,7 +403,7 @@ class Conjugate(Distribution):
         Sums over the sample dimensions of the statistics, which are nested in an arbitrary pytree structure
         """
 
-        return jtu.tree.map(lambda leaf_array: (leaf_array * weights).sum(sample_dims), stats)
+        return jtu.tree_map(lambda leaf_array: (leaf_array * weights).sum(sample_dims), stats)
 
     def map_stats_to_params(self, likelihood_stats: ArrayDict, counts: Array) -> ArrayDict:
         """
@@ -427,10 +427,10 @@ class Conjugate(Distribution):
             """
             return likelihood_stats.get(mapping.get(key, None), None)
 
-        mapped_leaves = jtu.tree.map(map_fn, eta_treedef.node_data()[1])
+        mapped_leaves = jtu.tree_map(map_fn, eta_treedef.node_data()[1])
         eta_stats = jtu.tree_unflatten(eta_treedef, mapped_leaves)
 
-        nu_stats = jtu.tree.map(lambda x: self.expand_event_dims(counts), self.posterior_params.nu)
+        nu_stats = jtu.tree_map(lambda x: self.expand_event_dims(counts), self.posterior_params.nu)
 
         return ArrayDict(eta=eta_stats, nu=nu_stats)
 

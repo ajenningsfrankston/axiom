@@ -91,7 +91,7 @@ def size(array_dict: PyTree) -> int:
 
 
 def sum_pytrees(*pytrees):
-    return jtu.tree.map(lambda *args: sum(args), *pytrees)
+    return jtu.tree_map(lambda *args: sum(args), *pytrees)
 
 
 def zeros_like(array_dict: ArrayDict) -> ArrayDict:
@@ -114,12 +114,12 @@ def tree_copy(tree: PyTree) -> PyTree:
     def copy(x):
         return x
 
-    return jtu.tree.map(copy, tree)
+    return jtu.tree_map(copy, tree)
 
 
 def apply_add(dist: PyTree, updates: PyTree) -> PyTree:
     """
-    A tree.map-broadcasted addition operation.
+    A tree_map-broadcasted addition operation.
     Useful for adding PyTrees together while handling None leaves.
     """
 
@@ -132,12 +132,12 @@ def apply_add(dist: PyTree, updates: PyTree) -> PyTree:
     def _is_none(x):
         return x is None
 
-    return jtu.tree.map(_apply_add, updates, dist, is_leaf=_is_none)
+    return jtu.tree_map(_apply_add, updates, dist, is_leaf=_is_none)
 
 
 def apply_scale(dist: PyTree, scale=1.0) -> PyTree:
     """
-    A tree.map-broadcasted scale operation.
+    A tree_map-broadcasted scale operation.
     Useful for scaling PyTrees while handling None leaves.
     """
 
@@ -150,7 +150,7 @@ def apply_scale(dist: PyTree, scale=1.0) -> PyTree:
     def _is_none(x):
         return x is None
 
-    return jtu.tree.map(_apply_scale, dist, is_leaf=_is_none)
+    return jtu.tree_map(_apply_scale, dist, is_leaf=_is_none)
 
 
 def tree_marginalize(dist: PyTree, weights: Array, dims: Tuple[int], keepdims=False) -> PyTree:
@@ -164,7 +164,7 @@ def tree_marginalize(dist: PyTree, weights: Array, dims: Tuple[int], keepdims=Fa
     def _is_none(x):
         return x is None
 
-    return jtu.tree.map(lambda x: apply_marginalization(x, reduce_dims=keepdims), dist, is_leaf=_is_none)
+    return jtu.tree_map(lambda x: apply_marginalization(x, reduce_dims=keepdims), dist, is_leaf=_is_none)
 
 
 def map_and_multiply(a: ArrayDict, b: ArrayDict, sum_dim: int, mapping: dict = None):
@@ -176,7 +176,7 @@ def map_and_multiply(a: ArrayDict, b: ArrayDict, sum_dim: int, mapping: dict = N
     def multiply_and_sum(x, y):
         return jnp.sum(x * y, axis=range(-sum_dim, 0), keepdims=True)
 
-    result = jtu.tree.map(multiply_and_sum, a, mapped_b)
+    result = jtu.tree_map(multiply_and_sum, a, mapped_b)
 
     return jtu.tree_reduce(lambda x, y: x + y, result)
 
@@ -368,7 +368,7 @@ def tree_at(
     # a few tricks to try and ensure that the same object doesn't appear multiple
     # times in the same PyTree.
     #
-    # So this first `tree.map` serves a dual purpose.
+    # So this first `tree_map` serves a dual purpose.
     # 1) Makes a copy of the composite nodes in the PyTree, to avoid aliasing via
     #    e.g. `pytree=[(1,)] * 5`. This has the tuple `(1,)` appear multiple times.
     # 2) It makes each leaf be a unique Python object, as it's wrapped in
@@ -385,7 +385,7 @@ def tree_at(
     # Whilst we're here: we also double-check that `where` is well-formed and doesn't
     # use leaf information. (As else `node_or_nodes` will be wrong.)
     node_or_nodes_nowrapper = where(pytree)
-    pytree = jtu.tree.map(_LeafWrapper, pytree, is_leaf=is_leaf)
+    pytree = jtu.tree_map(_LeafWrapper, pytree, is_leaf=is_leaf)
     node_or_nodes = where(pytree)
     leaves1, structure1 = jtu.tree_flatten(node_or_nodes_nowrapper, is_leaf=is_leaf)
     leaves2, structure2 = jtu.tree_flatten(node_or_nodes)
@@ -410,7 +410,7 @@ def tree_at(
             in_pytree = True
         return x  # needed for jax.tree_util.Partial, which has a dodgy constructor
 
-    jtu.tree.map(_in_pytree, pytree, is_leaf=lambda x: x is node_or_nodes)  # noqa: F821
+    jtu.tree_map(_in_pytree, pytree, is_leaf=lambda x: x is node_or_nodes)  # noqa: F821
     if in_pytree:
         nodes = (node_or_nodes,)
         if replace is not None:
@@ -426,7 +426,7 @@ def tree_at(
         else:
 
             def _replace_fn(x):
-                x = jtu.tree.map(_remove_leaf_wrapper, x)
+                x = jtu.tree_map(_remove_leaf_wrapper, x)
                 return replace_fn(x)
 
             replace_fns = [_replace_fn] * len(nodes)
@@ -443,7 +443,7 @@ def tree_at(
     def _make_replacement(x: Any) -> Any:
         return node_replace_fns.get(x, _remove_leaf_wrapper)(x)
 
-    out = jtu.tree.map(_make_replacement, pytree, is_leaf=lambda x: x in node_replace_fns)
+    out = jtu.tree_map(_make_replacement, pytree, is_leaf=lambda x: x in node_replace_fns)
 
     # Check that `where` is well-formed.
     for node in nodes:

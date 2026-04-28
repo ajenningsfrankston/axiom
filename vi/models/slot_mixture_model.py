@@ -298,12 +298,12 @@ def _combine_params(pi_0, likelihood_0, pi_1, likelihood_1, select_from_mask):
         return x_1 * u + x_0 * (1 - u)
 
     # Update prior
-    pi_0.posterior_params = jtu.tree.map(
+    pi_0.posterior_params = jtu.tree_map(
         lambda x_0, x_1: fn_pi(x_0, x_1), pi_0.posterior_params, pi_1.posterior_params
     )
 
     # update likelihoods
-    likelihood_0.posterior_params = jtu.tree.map(
+    likelihood_0.posterior_params = jtu.tree_map(
         lambda x_0, x_1: fn_like(x_0, x_1),
         likelihood_0.posterior_params,
         likelihood_1.posterior_params,
@@ -317,8 +317,8 @@ def _m_step_keep_unused(
 ):
     new_likelihood, new_pi = _m_step(
         input_delta,
-        likelihood=jtu.tree.map(lambda x: x, likelihood),
-        pi=jtu.tree.map(lambda x: x, pi),
+        likelihood=jtu.tree_map(lambda x: x, likelihood),
+        pi=jtu.tree_map(lambda x: x, pi),
         qx=qx,
         qz=qz,
         lr=lr,

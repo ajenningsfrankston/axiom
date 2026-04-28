@@ -457,7 +457,7 @@ def _combine_mvns(model_0, model_1, select_from_1):
     def fn(x_0, x_1):
         return jnp.where(select_from_1, x_1, x_0)
 
-    model_0.nat_params = jtu.tree.map(
+    model_0.nat_params = jtu.tree_map(
         lambda x, y: fn(x, y), model_0.nat_params, model_1.nat_params
     )
     return model_0

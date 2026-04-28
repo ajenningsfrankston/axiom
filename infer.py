@@ -457,11 +457,11 @@ def step_fn(
 
         def do_remap(rmm_model):
             # TODO update model, remapping old slots on the new data
-            model_updated = jax.tree.map(lambda x: x, imm_model.model)
+            model_updated = jax.tree_map(lambda x: x, imm_model.model)
 
             # first reset the slots to remap to prior params
             slots_to_wipe = identities.sum(axis=0)
-            model_updated.prior.posterior_params = jtu.tree.map(
+            model_updated.prior.posterior_params = jtu.tree_map(
                 lambda post, pri: pri * slots_to_wipe + post * (1 - slots_to_wipe),
                 model_updated.prior.posterior_params,
                 model_updated.prior.prior_params,
@@ -683,7 +683,7 @@ def reduce_fn_rmm(key, rmm_model, cxm=None, dxm=None, n_samples=2000, n_pairs=20
     else:
         # Basically also keep optimizing for the old data points that were sampled
         cxm = jnp.concatenate([cxm, cxm_new], axis=0)
-        dxm = jtu.tree.map(
+        dxm = jtu.tree_map(
             lambda d1, d2: jnp.concatenate([d1, d2], axis=0), dxm, dxm_new
         )
 
