@@ -4,21 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a662aed0-cc18-43e0-990a-bd77102d1253" name="Changes" comment="">
+    <list default="true" id="a662aed0-cc18-43e0-990a-bd77102d1253" name="Changes" comment="back to tree_map">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/example.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infer.py" beforeDir="false" afterPath="$PROJECT_DIR$/infer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/rmm.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/rmm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/smm.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/smm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/conjugate/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/conjugate/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/conjugate/mvn.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/conjugate/mvn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/distribution.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/distribution.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/exponential/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/exponential/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/models/hybrid_mixture_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/models/hybrid_mixture_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/models/mixture.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/models/mixture.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/models/slot_mixture_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/models/slot_mixture_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/transforms/linear_mng.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/transforms/linear_mng.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vi/utils/pytree.py" beforeDir="false" afterPath="$PROJECT_DIR$/vi/utils/pytree.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/defaults.py" beforeDir="false" afterPath="$PROJECT_DIR$/defaults.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +75,8 @@
       <workItem from="1777336042502" duration="1441000" />
       <workItem from="1777337744235" duration="119000" />
       <workItem from="1777338340468" duration="397000" />
-      <workItem from="1777342754701" duration="180000" />
+      <workItem from="1777342754701" duration="211000" />
+      <workItem from="1777343076694" duration="21000" />
     </task>
     <task id="LOCAL-00001" summary="changed tree_map to tree.map">
       <option name="closed" value="true" />
@@ -105,12 +94,21 @@
       <option name="project" value="LOCAL" />
       <updated>1777338531667</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="back to tree_map">
+      <option name="closed" value="true" />
+      <created>1777342954253</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1777342954253</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="changed tree_map to tree.map" />
     <MESSAGE value="library import now tree_map" />
-    <option name="LAST_COMMIT_MESSAGE" value="library import now tree_map" />
+    <MESSAGE value="back to tree_map" />
+    <option name="LAST_COMMIT_MESSAGE" value="back to tree_map" />
   </component>
 </project>

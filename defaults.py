@@ -24,7 +24,7 @@ import dataclasses
 from dataclasses import dataclass, fields
 
 from axiom.models import smm, tmm, rmm, imm
-import planner
+from axiom import planner
 
 
 DATA_DIR = os.environ.get("DATA_DIR", default=str(Path(__file__).parent / "data"))
