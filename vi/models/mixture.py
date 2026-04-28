@@ -17,7 +17,7 @@ from typing import Union, Optional, Tuple
 from jaxtyping import Array
 
 from jax import lax, jit, vmap
-from jax.tree_util import tree_map
+from jax.tree_util import tree.map
 import jax.numpy as jnp
 from jax.nn import softmax
 from jax.scipy.special import logsumexp
@@ -216,7 +216,7 @@ class Mixture(Model):
     def expand_to_categorical_dims(self, data: Array) -> Array:
         mix_dims = tuple(range(-self.prior.event_dim - self.likelihood.event_dim, -self.likelihood.event_dim))
         if type(data) is tuple:
-            data = tree_map(lambda d: jnp.expand_dims(d, mix_dims), data)
+            data = tree.map(lambda d: jnp.expand_dims(d, mix_dims), data)
         else:
             data = jnp.expand_dims(data, mix_dims)
         return data
@@ -226,7 +226,7 @@ class Mixture(Model):
     ) -> Union[Tuple[Distribution], Distribution]:
         mix_dims = tuple(range(-self.prior.event_dim, 0))
         if isinstance(inputs, tuple):
-            expanded_inputs = tree_map(
+            expanded_inputs = tree.map(
                 lambda x: x.expand_batch_shape(mix_dims), inputs, is_leaf=lambda x: isinstance(x, Distribution)
             )
         else:

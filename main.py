@@ -21,7 +21,7 @@ import csv
 
 from tqdm import tqdm
 
-import wandb
+
 import numpy as np
 import jax
 import jax.numpy as jnp
@@ -29,11 +29,13 @@ import jax.random as jr
 
 import defaults
 
+
+
 import gameworld.envs # Triggers registration of the environments in Gymnasium
 import gymnasium
 
-from axiom import infer as ax
-from axiom import visualize as vis
+import infer as ax
+import visualize as vis
 
 
 def main(config):
@@ -170,61 +172,7 @@ def main(config):
     with mediapy.set_show_save_dir("."):
         mediapy.show_videos({f"{config.game.lower()}": observations}, fps=30)
 
-    # Do wandb logging after the job to avoid performance impact
-    wandb.init(
-        reinit=True,
-        group=config.group,
-        project=config.project,
-        config=config,
-        resume="allow",
-        id=config.id + "-" + config.game,
-        name=config.name + "-" + config.game,
-    )
 
-    for i in range(len(rewards)):
-        wandb.log(
-            {
-                "reward": rewards[i],
-                "reward_1k_avg": jnp.mean(
-                    jnp.array(rewards[max(0, i - 1000) : max(i, 1)])
-                ),
-                "cumulative_reward": sum(jnp.array(rewards[max(0, i - 1000) : i])),
-                "expected_utility": expected_utility[i],
-                "expected_info_gain": expected_info_gain[i],
-                "num_components": num_components[i],
-            }
-        )
-
-    # finally log a sample of final gameplay
-    logs = {
-        "play": wandb.Video(
-            np.asarray(observations)[-1000:].transpose(0, 3, 1, 2),
-            fps=30,
-            format="mp4",
-        ),
-        "rmm": wandb.Image(
-            vis.plot_rmm(carry["rmm_model"], carry["imm_model"], colorize="cluster")
-        ),
-        "plan": wandb.Image(
-            vis.plot_plan(
-                observations[-2],
-                plan_info,
-                carry["tracked_obj_ids"][config.layer_for_dynamics],
-                carry["smm_model"].stats,
-                topk=1,
-            )
-        ),
-        "identities": wandb.Image(vis.plot_identity_model(carry["imm_model"])),
-    }
-    if config.perturb is not None:
-        logs["perturb"] = wandb.Video(
-            np.asarray(observations)[
-                config.perturb_step - 100 : config.perturb_step + 100
-            ].transpose(0, 3, 1, 2),
-            fps=30,
-            format="mp4",
-        )
-    wandb.log(logs)
 
 
 if __name__ == "__main__":

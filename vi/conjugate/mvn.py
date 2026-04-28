@@ -367,7 +367,7 @@ class MultivariateNormal(Conjugate):
         to make it ready for computing the dot products that help with things like `expected_log_likelihood`
         """
         eta_stats = self.expected_likelihood_params()
-        nu_stats = jtu.tree_map(lambda x: -x, self.expected_log_partition())
+        nu_stats = jtu.tree.map(lambda x: -x, self.expected_log_partition())
         return ArrayDict(eta=eta_stats, nu=nu_stats)
 
     def expected_log_partition(self) -> Array:

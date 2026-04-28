@@ -164,7 +164,7 @@ class Distribution:
             if isinstance(leaf, Distribution):
                 exp_leaf = leaf.expand_batch_shape(batch_relative_axes)
             elif isinstance(leaf, ArrayDict):
-                exp_leaf = jtu.tree_map(
+                exp_leaf = jtu.tree.map(
                     lambda x: expand_if_possible(x, self.batch_dim, self.event_dim, batch_relative_axes, absolute_axes),
                     leaf,
                 )
@@ -212,7 +212,7 @@ class Distribution:
 
         # maps the swap_axes_of_leaf function to all the leaves of the Distribution object, which may include arbitary Pytrees (other distributions, for example)
         data_fields, aux_fields = self.tree_flatten()
-        data_fields = jtu.tree_map(lambda x: swap_axes_of_leaf(x, axis1, axis2), data_fields)
+        data_fields = jtu.tree.map(lambda x: swap_axes_of_leaf(x, axis1, axis2), data_fields)
 
         # Now update `batch_shape` to reflect the new ordering of the dimensions in `batch_shape`
 
@@ -255,7 +255,7 @@ class Distribution:
 
         # maps the swap_axes_of_leaf function to all the leaves of the Distribution object, which may include arbitary Pytrees (other distributions, for example)
         data_fields, aux_fields = self.tree_flatten()
-        data_fields = jtu.tree_map(
+        data_fields = jtu.tree.map(
             lambda x: moveaxis_of_leaf(x, source, destination, absolute_src, absolute_dest), data_fields
         )
 

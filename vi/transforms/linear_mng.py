@@ -393,7 +393,7 @@ class LinearMatrixNormalGamma(Transform):
             ones=ones.sum(sample_dims),
         )
 
-        summed_stats = tree_util.tree_map(lambda se: se.sum(self.trivial_batch_axes, keepdims=True), summed_stats)
+        summed_stats = tree_util.tree.map(lambda se: se.sum(self.trivial_batch_axes, keepdims=True), summed_stats)
         if apply_updates:
             self.update_from_statistics(self.map_stats_to_params(summed_stats, None), lr, beta)
         else:
@@ -420,14 +420,14 @@ class LinearMatrixNormalGamma(Transform):
         sample_dims = self.get_sample_dims(X)
 
         if weights is None:
-            summed_stats = tree_util.tree_map(
+            summed_stats = tree_util.tree.map(
                 lambda x: x.sum(sample_dims),
                 likelihood_stats,
                 is_leaf=lambda x: isinstance(x, Array),
             )
         else:
             weights = weights.reshape(weights.shape + self.event_dim * (1,))
-            summed_stats = tree_util.tree_map(
+            summed_stats = tree_util.tree.map(
                 lambda x: (x * weights).sum(sample_dims),
                 likelihood_stats,
                 is_leaf=lambda x: isinstance(x, Array),

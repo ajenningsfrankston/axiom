@@ -134,7 +134,7 @@ class ExponentialFamily(Distribution):
         # TODO needs to be generalised using tree_flatten to pick out fields to expand # [fixme]
         assert shape[-self.batch_dim - self.event_dim :] == self.shape
         shape_diff = shape[: -self.batch_dim - self.event_dim]
-        self.nat_params = jtu.tree_map(lambda x: jnp.broadcast_to(x, shape_diff + x.shape), self.nat_params)
+        self.nat_params = jtu.tree.map(lambda x: jnp.broadcast_to(x, shape_diff + x.shape), self.nat_params)
         self.batch_shape = shape_diff + self.batch_shape
         self.batch_dim = len(self.batch_shape)
         return self

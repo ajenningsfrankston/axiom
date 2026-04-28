@@ -65,7 +65,7 @@ class HybridMixture(eqx.Module):
     def expand_to_categorical_dims(self, data, batch_dim, event_dim):
         mix_dims = tuple(range(-batch_dim - event_dim, -event_dim))
         if type(data) is tuple:
-            data = jtu.tree_map(lambda d: jnp.expand_dims(d, mix_dims), data)
+            data = jtu.tree.map(lambda d: jnp.expand_dims(d, mix_dims), data)
         else:
             data = jnp.expand_dims(data, mix_dims)
         return data
@@ -107,7 +107,7 @@ class HybridMixture(eqx.Module):
         return posterior, cont_ell, disc_ell
 
     def _m_step(self, c_data: Array, d_data: List[Array], qz: Array):
-        self_copy = jtu.tree_map(lambda x: x, self)
+        self_copy = jtu.tree.map(lambda x: x, self)
 
         c_data = self.expand_to_categorical_dims(
             c_data,
@@ -147,14 +147,14 @@ class HybridMixture(eqx.Module):
             res = pos_1 + pos_2 - pri_2
             return res
 
-        self.prior.posterior_params = jtu.tree_map(
+        self.prior.posterior_params = jtu.tree.map(
             fn,
             other.prior.prior_params,
             self.prior.posterior_params,
             other.prior.posterior_params,
         )
 
-        self.continuous_likelihood.posterior_params = jtu.tree_map(
+        self.continuous_likelihood.posterior_params = jtu.tree.map(
             fn,
             other.continuous_likelihood.prior_params,
             self.continuous_likelihood.posterior_params,
@@ -162,7 +162,7 @@ class HybridMixture(eqx.Module):
         )
 
         for i in range(len(self.discrete_likelihoods)):
-            self.discrete_likelihoods[i].posterior_params = jtu.tree_map(
+            self.discrete_likelihoods[i].posterior_params = jtu.tree.map(
                 fn,
                 other.discrete_likelihoods[i].prior_params,
                 self.discrete_likelihoods[i].posterior_params,
@@ -179,21 +179,21 @@ class HybridMixture(eqx.Module):
             return x_1 * u + x_0 * (1 - u)
 
         # Update prior
-        self.prior.posterior_params = jtu.tree_map(
+        self.prior.posterior_params = jtu.tree.map(
             lambda x_0, x_1: fn(x_0, x_1),
             self.prior.posterior_params,
             other.prior.posterior_params,
         )
 
         # update likelihoods
-        self.continuous_likelihood.posterior_params = jtu.tree_map(
+        self.continuous_likelihood.posterior_params = jtu.tree.map(
             lambda x_0, x_1: fn(x_0, x_1),
             self.continuous_likelihood.posterior_params,
             other.continuous_likelihood.posterior_params,
         )
 
         for i in range(len(self.discrete_likelihoods)):
-            self.discrete_likelihoods[i].posterior_params = jtu.tree_map(
+            self.discrete_likelihoods[i].posterior_params = jtu.tree.map(
                 lambda x_0, x_1: fn(x_0, x_1),
                 self.discrete_likelihoods[i].posterior_params,
                 other.discrete_likelihoods[i].posterior_params,
@@ -209,25 +209,25 @@ class HybridMixture(eqx.Module):
             posterior = posterior.at[idx_2].set(prior[idx_2])
             return posterior
 
-        self.prior.posterior_params = jtu.tree_map(
+        self.prior.posterior_params = jtu.tree.map(
             combine_fn, self.prior.prior_params, self.prior.posterior_params
         )
 
-        self.continuous_likelihood.posterior_params = jtu.tree_map(
+        self.continuous_likelihood.posterior_params = jtu.tree.map(
             combine_fn,
             self.continuous_likelihood.prior_params,
             self.continuous_likelihood.posterior_params,
         )
 
         for i in range(len(self.discrete_likelihoods)):
-            self.discrete_likelihoods[i].posterior_params = jtu.tree_map(
+            self.discrete_likelihoods[i].posterior_params = jtu.tree.map(
                 combine_fn,
                 self.discrete_likelihoods[i].prior_params,
                 self.discrete_likelihoods[i].posterior_params,
             )
 
     def _m_step_keep_unused(self, c_data: Array, d_data: List[Array], qz: Array):
-        model_updated: HybridMixture = jax.tree_map(lambda x: x, self)
+        model_updated: HybridMixture = jax.tree.map(lambda x: x, self)
         model_updated._m_step(c_data, d_data, qz)
 
         # 0.25 ensures that it only overwrites if the component is actually used

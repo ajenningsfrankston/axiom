@@ -542,7 +542,7 @@ def infer_and_update(
     )
 
     cx = cx[None, :, None]
-    dx = jtu.tree_map(lambda x: x[None, :, None], dx)
+    dx = jtu.tree.map(lambda x: x[None, :, None], dx)
 
     r_model, r_used_mask, elogp = train_step_fn(
         rmm.model, rmm.used_mask, cx, dx, logp_thr=r_ell_threshold
@@ -682,7 +682,7 @@ def rollout(
                 absolute_distance_scale=absolute_distance_scale,
             )
             c_obs = c_obs[None, :, None]
-            d_obs = jtu.tree_map(lambda d: d[None, :, None], d_obs)
+            d_obs = jtu.tree.map(lambda d: d[None, :, None], d_obs)
 
             # Compute the TMM switching slot using the rMM
             switch_slot, pred_reward, ell, qz, r_cluster = predict(
@@ -807,7 +807,7 @@ def _find_pairs(key, rmm, n_samples=None):
 
     _, cont_ell, disc_ell = rmm.model._e_step(
         cxm[indices],
-        jtu.tree_map(lambda d: d[indices], dxm),
+        jtu.tree.map(lambda d: d[indices], dxm),
     )
 
     c_ell_fixed, d_ell_fixed = jax.vmap(fix_vals)(cont_ell, disc_ell, indices)
@@ -839,7 +839,7 @@ def _find_pairs(key, rmm, n_samples=None):
 
 @jax.jit
 def consider_merge(c_data, d_data, elbo_before, mixture, used_mask, idx_1, idx_2):
-    mixture_after = jtu.tree_map(lambda x: x, mixture)
+    mixture_after = jtu.tree.map(lambda x: x, mixture)
     mixture_after._merge_clusters(idx_1, idx_2)
     mask_after = used_mask.at[idx_2].set(0)
 
@@ -895,7 +895,7 @@ def run_bmr(key, rmm, n_samples, pairs=None, cxm=None, dxm=None):
     if cxm is None:
         cxm, dxm = rmm.model.get_means_as_data()
         cxm = cxm[rmm.used_mask > 0]
-        dxm = jtu.tree_map(lambda d: d[rmm.used_mask > 0], dxm)
+        dxm = jtu.tree.map(lambda d: d[rmm.used_mask > 0], dxm)
 
     initial_elbo = compute_elbo(rmm.model, cxm, dxm)
 
